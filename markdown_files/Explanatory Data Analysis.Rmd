@@ -2,14 +2,20 @@
 title: "Explanatory Data Analysis"
 author: "Turjya Laskar"
 date: "`r Sys.Date()`"
-output: html_document
+output: 
+  html_document:
+    toc: yes
+    number_sections: yes
+    toc_float:
+      collapsed: no
+    code_folding: hide
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Library used:
+## **Library used**:
 
 In this report, several R libraries were utilized to facilitate data analysis and presentation.
 
@@ -21,9 +27,12 @@ In this report, several R libraries were utilized to facilitate data analysis an
 library(DT)
 library(tidyverse)
 library(glue)
+library(ggthemes)
+library(scales)
+library(RColorBrewer)
 ```
 
-## Data Loading
+## **Data Loading**
 
 ```{r data, message=FALSE}
 
@@ -34,7 +43,7 @@ train_taret_scored<- read_csv("C:/Users/Lenovo/Desktop/Kaggle Project/Dataset/tr
 sample_submission <- read_csv("C:/Users/Lenovo/Desktop/Kaggle Project/Dataset/sample_submission.csv",  show_col_types = FALSE)
 ```
 
-## Expalnatory Data Analysis
+## **Explanatory Data Analysis**
 
 To start, we’ll get a quick overview of the  *train_features* datasets and their shapes.
 
@@ -53,7 +62,7 @@ Here,
 - **'g-'**: Gene expression data.
 - **'c-'**: cell viability data.
  
-### Shape of the **train_features**
+### Shape of the train_features
 
 ```{r shape, echo=FALSE}
 glue(
@@ -70,19 +79,91 @@ glue(
 ```{r unique id, echo=FALSE}
 glue('Total number of unique sig_ids: {n_distinct(train_features$sig_id)}')
 ```
-
+## Treatment Type
 ```{r cp_type, echo=FALSE}
 train_features%>%
   group_by(cp_type)%>%
   summarise(count=n())%>%
   datatable()
 ```
+
+```{r cp_type_viz, echo=FALSE}
+p1 <- train_features %>% 
+  count(cp_type) %>% 
+  add_tally(n, name = "total") %>% 
+  mutate(perc = n / total) %>% 
+  ggplot(aes(x = cp_type, y = perc, fill = cp_type)) +
+  geom_col(width = 0.6) +
+  geom_text(aes(label = sprintf("%d", n)), vjust = -0.5, size = 5, color = "black") +
+  scale_y_continuous(labels = percent_format(), expand = expansion(mult = c(0, 0.1))) +
+  scale_fill_manual(values = c("grey70", "violetred")) +
+  theme_hc() +
+  theme(
+    legend.position = "none",
+    plot.title = element_text(size = 14, face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(size = 12, hjust = 0.5),
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.ticks = element_blank(),
+    panel.grid.major.y = element_line(color = "grey80"),
+    panel.grid.minor = element_blank()
+  ) +
+  labs(
+    x = NULL,
+    y = NULL,
+    title = "Sample Treatment",
+    subtitle = "(Compound vs Control)"
+  )
+
+p1
+
+```
+
+
+## Treatment Duration
 ```{r cp_time, echo=FALSE}
 train_features%>%
   group_by(cp_time)%>%
   summarise(count=n())%>%
   datatable()
 ```
+
+```{r cp_time_viz,echo=FALSE}
+
+p2 <- train_features %>%
+  count(cp_time) %>%
+  mutate(cp_time = as.factor(cp_time)) %>%
+  add_tally(n, name = "total") %>%
+  mutate(perc = n / total) %>%
+  ggplot(aes(x = cp_time, y = perc, fill = cp_time)) +
+  geom_col(width = 0.6) +
+  geom_text(aes(label = sprintf("%d", n)), vjust = -0.5, size = 5, color = "black") +
+  scale_y_continuous(labels = percent_format(), expand = expansion(mult = c(0, 0.1))) +
+  scale_fill_brewer(type = "seq", palette = "Oranges") +
+  theme_hc() +
+  theme(
+    legend.position = "none",
+    plot.title = element_text(size = 14, face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(size = 12, hjust = 0.5),
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.ticks = element_blank(),
+    panel.grid.major.y = element_line(color = "grey80"),
+    panel.grid.minor = element_blank()
+  ) +
+  labs(
+    x = NULL,
+    y = NULL,
+    title = "Treatment Duration",
+    subtitle = "(Units of hours)"
+  )
+
+p2
+
+```
+
+
+## Treatment Dose
 ```{r cp_dose,echo=FALSE}
 train_features%>%
   group_by(cp_dose)%>%
@@ -90,6 +171,40 @@ train_features%>%
   datatable()
 
 ```
+```{r cp_dose_viz, echo=FALSE}
+p3 <- train_features %>%
+  count(cp_dose) %>%
+  add_tally(n, name = "total") %>%
+  mutate(perc = n / total) %>%
+  ggplot(aes(x = cp_dose, y = perc, fill = cp_dose)) +
+  geom_col(width = 0.6) +
+  geom_text(aes(label = sprintf("%d", n)), vjust = -0.5, size = 5, color = "black") +
+  scale_y_continuous(labels = percent_format(), expand = expansion(mult = c(0, 0.1))) +
+  scale_fill_manual(values = c("darkblue", "darkred")) +
+  theme_hc() +
+  theme(
+    legend.position = "none",
+    plot.title = element_text(size = 14, face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(size = 12, hjust = 0.5),
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.ticks = element_blank(),
+    panel.grid.major.y = element_line(color = "grey80"),
+    panel.grid.minor = element_blank()
+  ) +
+  labs(
+    x = NULL,
+    y = NULL,
+    title = "Treatment Dose",
+    subtitle = "(High vs Low)"
+  )
+
+p3
+```
+
+
+
+
 ## Conclusion
 
 
