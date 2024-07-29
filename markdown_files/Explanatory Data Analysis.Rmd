@@ -1,0 +1,75 @@
+---
+title: "Explanatory Data Analysis"
+author: "Turjya Laskar"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Library used:
+
+```{r library}
+library(DT)
+library(tidyverse)
+library(glue)
+```
+
+## Data Loading
+
+```{r data}
+
+train_features <- read_csv("C:/Users/Lenovo/Desktop/Kaggle Project/Dataset/train_features.csv")
+train_drug <- read_csv("C:/Users/Lenovo/Desktop/Kaggle Project/Dataset/train_drug.csv")
+train_target_nonscored<-read_csv("C:/Users/Lenovo/Desktop/Kaggle Project/Dataset/train_targets_nonscored.csv")
+train_taret_scored<- read_csv("C:/Users/Lenovo/Desktop/Kaggle Project/Dataset/train_targets_scored.csv")
+sample_submission <- read_csv("C:/Users/Lenovo/Desktop/Kaggle Project/Dataset/sample_submission.csv")
+```
+
+## Expalnatory Data Analysis
+
+You can also embed plots, for example:
+
+```{r train_features}
+
+head(train_features,50)%>%
+  datatable()
+```
+
+```{r shape}
+glue(
+"Number of rows: {nrow(train_features)}\nNumber of columns: {ncol(train_features)}"
+)
+```
+```{r gene&cell}
+glue(
+'Number of "g-" features: {train_features %>% select(starts_with("g-"))%>%ncol()}\nNumber of "c-" features: {train_features %>% select(starts_with("c-"))%>%ncol()}'
+)
+```
+```{r unique id}
+glue('Total number of unique ids: {n_distinct(train_features$sig_id)}')
+```
+
+```{r cp_type}
+table(train_features$cp_type)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
