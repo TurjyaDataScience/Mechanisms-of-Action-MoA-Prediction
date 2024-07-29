@@ -8,7 +8,6 @@ output:
     number_sections: yes
     toc_float:
       collapsed: no
-    code_folding: hide
 ---
 
 ```{r setup, include=FALSE}
@@ -79,7 +78,10 @@ glue(
 ```{r unique id, echo=FALSE}
 glue('Total number of unique sig_ids: {n_distinct(train_features$sig_id)}')
 ```
-## Treatment Type
+
+## Individual Treatment Features {.tabset}
+
+### Treatment Type
 ```{r cp_type, echo=FALSE}
 train_features%>%
   group_by(cp_type)%>%
@@ -120,7 +122,7 @@ p1
 ```
 
 
-## Treatment Duration
+### Treatment Duration
 ```{r cp_time, echo=FALSE}
 train_features%>%
   group_by(cp_time)%>%
@@ -163,7 +165,7 @@ p2
 ```
 
 
-## Treatment Dose
+### Treatment Dose
 ```{r cp_dose,echo=FALSE}
 train_features%>%
   group_by(cp_dose)%>%
