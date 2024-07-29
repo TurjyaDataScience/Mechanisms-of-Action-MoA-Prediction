@@ -11,7 +11,13 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Library used:
 
-```{r library}
+In this report, several R libraries were utilized to facilitate data analysis and presentation.
+
+- **DT**: Used for creating interactive data tables.
+- **tidyverse**: A suite of packages for data manipulation and visualization.
+- **glue**: Facilitates string interpolation for dynamic text outputs.
+
+```{r library, warning=F, message=FALSE}
 library(DT)
 library(tidyverse)
 library(glue)
@@ -19,46 +25,72 @@ library(glue)
 
 ## Data Loading
 
-```{r data}
+```{r data, message=FALSE}
 
-train_features <- read_csv("C:/Users/Lenovo/Desktop/Kaggle Project/Dataset/train_features.csv")
-train_drug <- read_csv("C:/Users/Lenovo/Desktop/Kaggle Project/Dataset/train_drug.csv")
-train_target_nonscored<-read_csv("C:/Users/Lenovo/Desktop/Kaggle Project/Dataset/train_targets_nonscored.csv")
-train_taret_scored<- read_csv("C:/Users/Lenovo/Desktop/Kaggle Project/Dataset/train_targets_scored.csv")
-sample_submission <- read_csv("C:/Users/Lenovo/Desktop/Kaggle Project/Dataset/sample_submission.csv")
+train_features <- read_csv("C:/Users/Lenovo/Desktop/Kaggle Project/Dataset/train_features.csv", show_col_types = FALSE)
+train_drug <- read_csv("C:/Users/Lenovo/Desktop/Kaggle Project/Dataset/train_drug.csv", show_col_types = FALSE)
+train_target_nonscored<-read_csv("C:/Users/Lenovo/Desktop/Kaggle Project/Dataset/train_targets_nonscored.csv", show_col_types = FALSE)
+train_taret_scored<- read_csv("C:/Users/Lenovo/Desktop/Kaggle Project/Dataset/train_targets_scored.csv",  show_col_types = FALSE)
+sample_submission <- read_csv("C:/Users/Lenovo/Desktop/Kaggle Project/Dataset/sample_submission.csv",  show_col_types = FALSE)
 ```
 
 ## Expalnatory Data Analysis
 
-You can also embed plots, for example:
+To start, we’ll get a quick overview of the  *train_features* datasets and their shapes.
 
-```{r train_features}
+```{r train_features, echo=FALSE}
 
 head(train_features,50)%>%
   datatable()
 ```
 
-```{r shape}
+Here,
+
+- **sig_id**: Used for creating interactive data tables.
+- **cp_type**: indicates the sample treatment.
+- **cp_time**: indicates duration of the treatment.
+- **cp_dose**: indicates dosage of the treatment.
+- **'g-'**: Gene expression data.
+- **'c-'**: cell viability data.
+ 
+### Shape of the **train_features**
+
+```{r shape, echo=FALSE}
 glue(
 "Number of rows: {nrow(train_features)}\nNumber of columns: {ncol(train_features)}"
 )
 ```
-```{r gene&cell}
+### Number of 'g-' & 'c-' features
+```{r gene&cell, echo=FALSE}
 glue(
 'Number of "g-" features: {train_features %>% select(starts_with("g-"))%>%ncol()}\nNumber of "c-" features: {train_features %>% select(starts_with("c-"))%>%ncol()}'
 )
 ```
-```{r unique id}
-glue('Total number of unique ids: {n_distinct(train_features$sig_id)}')
+### Number of Unique sid_ids
+```{r unique id, echo=FALSE}
+glue('Total number of unique sig_ids: {n_distinct(train_features$sig_id)}')
 ```
 
-```{r cp_type}
-table(train_features$cp_type)
+```{r cp_type, echo=FALSE}
+train_features%>%
+  group_by(cp_type)%>%
+  summarise(count=n())%>%
+  datatable()
 ```
+```{r cp_time, echo=FALSE}
+train_features%>%
+  group_by(cp_time)%>%
+  summarise(count=n())%>%
+  datatable()
+```
+```{r cp_dose,echo=FALSE}
+train_features%>%
+  group_by(cp_dose)%>%
+  summarise(count=n())%>%
+  datatable()
 
-
-
-
+```
+## Conclusion
 
 
 
